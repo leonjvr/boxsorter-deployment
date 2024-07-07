@@ -1,7 +1,5 @@
 
-
 services:
-
   web:
     image: tileonjvr/boxsorter-test:latest
     command: gunicorn boxsorter.wsgi:application --bind 0.0.0.0:8000
@@ -60,6 +58,7 @@ services:
 
 networks:
   backend_net:
+    external: true
 
 volumes:
   static_volume:
