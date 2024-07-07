@@ -1,3 +1,77 @@
+# First Create a Bucket on AWS S3
+Only do this if you have not done so as yet
+
+## Creating a Bucket on S3
+Create the bucket with an appropriate name
+Edit the Permissions of the bucket
+Add the following JSON to the CORS permissions:
+json
+[
+    {
+        "AllowedHeaders": [
+            "*"
+        ],
+        "AllowedMethods": [
+            "PUT",
+            "POST",
+            "GET"
+        ],
+        "AllowedOrigins": [
+            "http://localhost:8000"
+        ],
+        "ExposeHeaders": []
+    }
+]
+
+
+Create an AMI user who only have access to this bucket
+Then create API credentials for the user
+
+
+# Third Intellect Docker Deployment (For Dev on Local)
+
+This guide will help you deploy the a Django application using docker on a VPS for development purposes.
+
+Check the docker-compose-dev.yml if all configuration is correct
+Copy example.env to .env and set your configuration
+Check that your django application will understand your .env
+
+Then build the image:
+bash
+cd path/to/courtroll/courtroll-deployment
+docker-compose -f docker-compose-dev.yml build web
+
+Check in Docker if you can see the image under the image tab. It should have the Tag "latest" and Created a few seconds ago
+
+After you have built the new image, you can bring up the services as follows:
+bash
+docker-compose -f docker-compose-dev.yml --env-file .env up -d
+
+Please check if they are all running in docker. If not, check their logs for issues. A service not running correctly will keep on restarting.
+
+If you make any changes to the docker-compose-dev.yml, then you need to restart the services as follows:
+bash
+docker-compose -f docker-compose-dev.yml down
+docker-compose -f docker-compose-dev.yml --env-file .env up -d
+
+
+If the changes in your docker-compose-dev.yml file involve updates to the Dockerfile or other build contexts, you might need to rebuild the images. Or if your Pipfile or Requirements.txt changed then you need to rebuild. Use the following command to rebuild:
+bash
+docker-compose -f docker-compose-dev.yml build --no-cache web
+
+
+To rebuild all services
+bash
+docker-compose -f docker-compose-dev.yml build
+
+
+Then, always do the following to make to switch to the new image
+bash
+docker-compose -f docker-compose-dev.yml down
+docker-compose -f docker-compose-dev.yml --env-file .env up -d
+
+
+
 # Zyneura Docker Deployment (For Test and Production VPS) - VERTICAL
 
 This guide will help you deploy the Zyneura Django application using docker on a VPS for testing and production purposes.
