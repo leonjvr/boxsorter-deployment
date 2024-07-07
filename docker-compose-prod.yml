@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  web:
+    image: tileonjvr/boxsorter-test:latest
+    command: gunicorn boxsorter.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/code/staticfiles
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=boxsorter.settings
+    depends_on:
+      - db
+    networks:
+      - backend_net
+    restart: unless-stopped  # Add this line for restart policy
+
+  celery_worker:
+    image: tileonjvr/boxsorter-test:latest
+    command: celery -A boxsorter worker --loglevel=info
+    volumes:
+      - static_volume:/static
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=boxsorter.settings
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - backend_net
+    restart: unless-stopped  # Add this line for restart policy
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${TI_DB_NAME}
+      POSTGRES_USER: ${TI_DB_USER}
+      POSTGRES_PASSWORD: ${TI_DB_PASSWORD}
+    networks:
+      - backend_net
+    restart: unless-stopped  # Add this line for restart policy
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - backend_net
+    command: ["redis-server", "--bind", "backend_net"]
+    restart: unless-stopped  # Add this line for restart policy
+
+networks:
+  backend_net:
+
+volumes:
+  static_volume:
+  postgres_data:
+  certbot_conf:
+  certbot_www:

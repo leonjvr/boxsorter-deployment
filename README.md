@@ -168,7 +168,7 @@ docker login -u tileonjvr
 docker-compose -f docker-compose.yml --env-file .env up -d
 sudo reboot
 ```
-At the password prompt: dckr_pat_44yf_CssCAGzo9JyvDYVSiw3WTg
+At the password prompt: dckr_pat_q3SX3wI4-bXLvQ22Q22Ql3_P4Yo
 
 When docker asks for the login details, you need to provide the docker.com docker hub login for this repo.
 
