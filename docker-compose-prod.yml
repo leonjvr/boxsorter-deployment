@@ -15,7 +15,8 @@ services:
       - db
     networks:
       - backend_net
-    restart: unless-stopped  # Add this line for restart policy
+    restart: unless-stopped
+    entrypoint: ["/code/entrypoint.sh"]
 
   celery_worker:
     image: tileonjvr/boxsorter-test:latest
@@ -33,7 +34,8 @@ services:
       - web
     networks:
       - backend_net
-    restart: unless-stopped  # Add this line for restart policy
+    restart: unless-stopped
+    entrypoint: ["/code/entrypoint.sh"]
 
   db:
     image: postgres:13
@@ -45,7 +47,7 @@ services:
       POSTGRES_PASSWORD: ${TI_DB_PASSWORD}
     networks:
       - backend_net
-    restart: unless-stopped  # Add this line for restart policy
+    restart: unless-stopped
 
   redis:
     image: redis:latest
@@ -54,7 +56,7 @@ services:
     networks:
       - backend_net
     command: ["redis-server", "--bind", "backend_net"]
-    restart: unless-stopped  # Add this line for restart policy
+    restart: unless-stopped
 
 networks:
   backend_net:
